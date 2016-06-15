@@ -33,7 +33,7 @@ import os
 np.set_printoptions(edgeitems=30)
 
 params = dict(
-    path = os.path.join(os.path.expanduser('~'), 'data', 'smallHybrid', '*'),
+    path = os.path.join(os.getcwd(), 'data', 'smallHybrid', '*'),
     n_row = 50000,
     batchsize = 10,
     learning_rate = 0.001,

@@ -1,4 +1,4 @@
-from BasePortfolio import BasePortfolio
+from Portfolio.BasePortfolio import BasePortfolio
 import pandas as pd
 import math
 import numpy as np

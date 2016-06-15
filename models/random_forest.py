@@ -33,6 +33,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.decomposition import PCA
 import csv
 import os
+import sys
 import pandas as pd
 #np.set_printoptions(edgeitems=30)
 
@@ -59,7 +60,9 @@ def load_data(file_path):
     files = []
     for file in glob.glob(file_path):
         files.append(file)
-        print(file)
+        print(files)
+        sys.stdout.flush()
+
     files.sort()
 
     #dataframe for appending labels and features from all .bin files
@@ -189,7 +192,7 @@ def classification_error(y_test, y_pred):
     return pd.DataFrame({"correct": [correct],"total": [total],'correct/total':[float(correct) / total]})
 
 def process_machine_learning(symbol, i):
-    params['path']=os.path.join(os.path.expanduser('~'), 'RA','MachineLearningProject', 'data', 'smallBinaryPrice',symbol+'*')
+    params['path']=os.path.join(os.getcwd(), 'data', 'csv',symbol+'-5_small.bin')
     
     x,y = load_data(params['path'])
     if params['feature_reduction']:
@@ -198,7 +201,7 @@ def process_machine_learning(symbol, i):
     y_pred = random_forest(x_train, x_test, y_train, y_test)
 
     signal_pd = pd.DataFrame({'y_test':y_test[:,0],'y_pred':y_pred})
-    signal_pd.to_csv(os.path.join(os.path.expanduser('~'), 'RA','MachineLearningProject', 'data', 'random_forest',symbol+'_'+str(i)+'.csv'),header = False)
+    signal_pd.to_csv(os.path.join(os.getcwd(), 'data', 'random_forest',symbol+'_'+str(i)+'.csv'),header = False)
 
     
 if __name__ == "__main__":
@@ -206,6 +209,6 @@ if __name__ == "__main__":
     #log = open('../../log/pca_rf', 'w')
     #sys.stdout = log
     signals, report = process_machine_learning('NG',10)
-    print report
+    print (report)
    
     #log.close()

@@ -35,7 +35,7 @@ import random
 pd.set_option('precision', 15)
 
 params = dict(
-    path = os.path.join(os.path.expanduser('~'), 'data', 'csv', '*'),
+    path = os.path.join(os.getcwd(), 'data', 'csv', '*'),
     min_lagging = 1,
     max_lagging = 100,
     #interval_lagging = 1, #not implemented
@@ -45,7 +45,7 @@ params = dict(
     list_epsilon = [0.01, 0.001, 0.0001, 0.00001, 0.000001, 0.0000001,0.00000001],
     theta = 0.001,
     max_correlation_window = 100,
-    stock_count = 43,
+    stock_count = 3,
     small_output_size = 50000,
 )
 
@@ -54,12 +54,19 @@ input_files = []
 for file in glob.glob(params['path']):
     input_files.append(file)
 input_files.sort()
+params['stock_count'] = len(input_files)
+
+print (input_files)
+print (params['stock_count'])
+
+sys.stdout.flush()
+
 
 #find the symbol with the lowest number of datapoints
 #number of datapoints in the output is limited by the symbol with the lowest number of datapoints.
 list_n = []
 for file in input_files:
-    df = pd.read_csv(file, header=None, dtype='float64')
+    df = pd.read_csv(file, header=None)
     list_n.append(len(df))
 min_n = min(list_n)
 print("min_n:", min_n)
@@ -69,8 +76,9 @@ df_normalized = pd.DataFrame(dtype='float64')
 df_return = pd.DataFrame(dtype='float64')
 
 for file in input_files:
-    df = pd.read_csv(file, names=['Timestamp', 'Price'], header=None, dtype='float64')
-    df = df.ix[:min_n]
+    df = pd.read_csv(file, names=['Price'], usecols=[1], header=None, dtype='float64')
+    #df = pd.read_csv(file, names=['Timestamp', 'Price'], header=None, dtype=['datetime','float64'])
+    df = df.ix[:min_n-1]
     series_price = df.Price
     series_return = pd.Series(index = df.index, name="Return"+file, dtype='float64')
 
@@ -209,8 +217,8 @@ for j in range(0, params['stock_count']):
     smallOutputArray.tofile(file+'_small.bin')
 
     #for outputting to csv format
-    # outputDataFrame.to_csv(file+'_largeHybrid.csv',index=False)
-    # smallDataFrame.to_csv(file+'_smallHybrid.csv',index=False)
+    outputDataFrame.to_csv(file+'_largeHybrid.csv',index=False)
+    smallDataFrame.to_csv(file+'_smallHybrid.csv',index=False)
 
 
 

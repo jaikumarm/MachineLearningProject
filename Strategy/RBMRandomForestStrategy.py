@@ -1,8 +1,9 @@
+import sys
 import Utils as ut
 import models.random_forest as rb
 import glob
 import os
-from BaseStrategy import BaseStrategy
+from Strategy.BaseStrategy import BaseStrategy
 import datetime
 
 class RBMRandomForestStrategy(BaseStrategy):
@@ -19,8 +20,13 @@ class RBMRandomForestStrategy(BaseStrategy):
         self.data_point = data_point
         self.iteration = i
         data = ut.read_price_from_csv(symbol, self.data_point, i)
-        self.__time__ = [ut.convert_to_time(i) for i in data[0]]
+        self.__time__ = data[0]
+        #self.__time__ = [ut.convert_to_time(i) for i in data[0]]
         self.__bars__ = data[1]
+        
+        print (data)
+        sys.stdout.flush()
+        
         # read from file
         self.signals = []
 
@@ -29,7 +35,7 @@ class RBMRandomForestStrategy(BaseStrategy):
         Generate signal according input file
         :return: signals
         """
-        filename = os.path.join(os.path.expanduser('~'), 'RA', 'MachineLearningProject', 'data','random_forest', self.symbol+'_'+str(self.iteration)+'*')
+        filename = os.path.join(os.getcwd(), 'data','random_forest', self.symbol+'_'+str(self.iteration)+'*')
         filenames = glob.glob(filename)
         if len(filenames) < 1:
             rb.process_machine_learning(self.symbol, self.iteration)
